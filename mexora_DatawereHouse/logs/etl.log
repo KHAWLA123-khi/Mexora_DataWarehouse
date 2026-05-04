@@ -1,0 +1,810 @@
+2026-04-30 15:28:07 | loader                    | INFO     | Connexion PostgreSQL prête
+2026-05-01 12:40:34 | main                      | INFO     | ╔══════════════════════════════════════════════════╗
+2026-05-01 12:40:34 | main                      | INFO     | ║       PIPELINE ETL MEXORA — DÉMARRAGE           ║
+2026-05-01 12:40:34 | main                      | INFO     | ╚══════════════════════════════════════════════════╝
+2026-05-01 12:40:34 | main                      | INFO     | >>> [1/3] EXTRACTION depuis data/raw/
+2026-05-01 12:40:34 | extractor                 | INFO     | =======================================================
+2026-05-01 12:40:34 | extractor                 | INFO     |   EXTRACTION — DÉMARRAGE
+2026-05-01 12:40:34 | extractor                 | INFO     | =======================================================
+2026-05-01 12:40:34 | extractor                 | INFO     | Lecture commandes : C:\Users\khaoula\Desktop\Mexora_DataWerehouse\mexora_DatawereHouse\data\raw\commandes_mexora.csv
+2026-05-01 12:40:35 | extractor                 | INFO     | commandes brutes : 51500 lignes | colonnes : ['id_commande', 'id_client', 'id_produit', 'date_commande', 'quantite', 'prix_unitaire', 'statut', 'ville_livraison', 'mode_paiement', 'id_livreur', 'date_livraison']
+2026-05-01 12:40:35 | extractor                 | DEBUG    | [commandes] Champs vides détectés :
+id_livreur         3626
+date_livraison    23657
+2026-05-01 12:40:35 | extractor                 | INFO     | Lecture clients : C:\Users\khaoula\Desktop\Mexora_DataWerehouse\mexora_DatawereHouse\data\raw\clients_mexora.csv
+2026-05-01 12:40:35 | extractor                 | INFO     | clients bruts : 5188 lignes | colonnes : ['id_client', 'nom', 'prenom', 'email', 'date_naissance', 'sexe', 'ville', 'telephone', 'date_inscription', 'canal_acquisition']
+2026-05-01 12:40:35 | extractor                 | DEBUG    | [clients] Champs vides détectés :
+date_naissance    50
+2026-05-01 12:40:35 | extractor                 | INFO     | Lecture produits : C:\Users\khaoula\Desktop\Mexora_DataWerehouse\mexora_DatawereHouse\data\raw\produits.json
+2026-05-01 12:40:35 | extractor                 | INFO     | produits bruts : 50 lignes | colonnes : ['id_produit', 'nom', 'categorie', 'sous_categorie', 'marque', 'fournisseur', 'prix_catalogue', 'origine_pays', 'date_creation', 'actif']
+2026-05-01 12:40:35 | extractor                 | INFO     | Lecture régions : C:\Users\khaoula\Desktop\Mexora_DataWerehouse\mexora_DatawereHouse\data\raw\regions_maroc.csv
+2026-05-01 12:40:35 | extractor                 | INFO     | regions : 30 lignes | colonnes : ['code_ville', 'nom_ville_standard', 'province', 'region_admin', 'zone_geo', 'population', 'code_postal']
+2026-05-01 12:40:35 | extractor                 | INFO     |   EXTRACTION — TERMINÉE ✓
+2026-05-01 12:40:35 | extractor                 | INFO     | =======================================================
+2026-05-01 12:40:35 | main                      | INFO     | >>> [2/3] TRANSFORMATION
+2026-05-01 12:40:35 | clean_clients             | INFO     | ── Nettoyage CLIENTS démarré ──
+2026-05-01 12:40:35 | clean_clients             | INFO     | [1] Doublons (même email) supprimés : 188
+2026-05-01 12:40:35 | clean_clients             | INFO     | [2] Sexe normalisé → M/F/Inconnu
+2026-05-01 12:40:35 | clean_clients             | INFO     | [3] Dates naissance invalides mises à NaT : 187
+2026-05-01 12:40:35 | clean_clients             | INFO     | [4] Emails invalides détectés : 399
+2026-05-01 12:40:35 | clean_clients             | INFO     | [5] Villes harmonisées
+2026-05-01 12:40:35 | clean_clients             | INFO     | ── CLIENTS : 5188 → 5000 lignes après nettoyage ──
+2026-05-01 12:40:35 | clean_produits            | INFO     | ── Nettoyage PRODUITS démarré ──
+2026-05-01 12:40:35 | clean_produits            | INFO     | [1] Catégories normalisées (title case)
+2026-05-01 12:40:35 | clean_produits            | INFO     | [2] Produits inactifs (actif=False) : 6 — conservés pour gestion SCD
+2026-05-01 12:40:35 | clean_produits            | INFO     | [3] Prix catalogue nuls remplacés par 0.0 : 5
+2026-05-01 12:40:35 | clean_produits            | INFO     | ── PRODUITS : 50 → 50 lignes après nettoyage ──
+2026-05-01 12:40:35 | clean_commandes           | INFO     | ── Nettoyage COMMANDES démarré ──
+2026-05-01 12:40:35 | clean_commandes           | INFO     | [1] Doublons supprimés : 1500
+2026-05-01 12:41:06 | clean_commandes           | INFO     | [2] Dates commande non parsées : 0
+2026-05-01 12:41:06 | clean_commandes           | INFO     | [2] Lignes supprimées (date invalide) : 0
+2026-05-01 12:41:06 | clean_commandes           | INFO     | [3] Villes de livraison harmonisées
+2026-05-01 12:41:06 | clean_commandes           | INFO     | [4] id_livreur manquants remplacés : 3499
+2026-05-01 12:41:06 | clean_commandes           | INFO     | [5] Lignes supprimées (quantité ≤ 0) : 717
+2026-05-01 12:41:06 | clean_commandes           | INFO     | [6] Lignes supprimées (prix = 0) : 498
+2026-05-01 12:41:06 | clean_commandes           | INFO     | [7] Statuts non mappés (→ 'inconnu') : 0
+2026-05-01 12:41:06 | clean_commandes           | INFO     | ── COMMANDES : 51500 → 48785 lignes après nettoyage ──
+2026-05-01 12:41:06 | build_dimensions          | INFO     | Construction dim_temps...
+2026-05-01 12:41:07 | build_dimensions          | INFO     | dim_temps : 4383 lignes
+2026-05-01 12:41:07 | build_dimensions          | INFO     | Construction dim_region...
+2026-05-01 12:41:07 | build_dimensions          | INFO     | dim_region : 30 lignes
+2026-05-01 12:41:07 | build_dimensions          | INFO     | Construction dim_client (SCD Type 2)...
+2026-05-01 12:41:07 | build_dimensions          | INFO     | dim_client : 5000 lignes (version initiale)
+2026-05-01 12:41:07 | build_dimensions          | INFO     | Construction dim_produit (SCD Type 1)...
+2026-05-01 12:41:07 | build_dimensions          | INFO     | dim_produit : 50 lignes dont 6 inactifs (conservés pour SCD)
+2026-05-01 12:41:07 | build_dimensions          | INFO     | Construction fact_commandes...
+2026-05-01 12:41:07 | build_dimensions          | WARNING  | id_client sans correspondance dans dim_client : 200
+2026-05-01 12:41:07 | build_dimensions          | INFO     | fact_commandes : 48785 lignes
+2026-05-01 12:41:07 | main                      | INFO     |   dim_temps    :    4,383 lignes
+2026-05-01 12:41:07 | main                      | INFO     |   dim_region   :       30 lignes
+2026-05-01 12:41:07 | main                      | INFO     |   dim_client   :    5,000 lignes
+2026-05-01 12:41:07 | main                      | INFO     |   dim_produit  :       50 lignes
+2026-05-01 12:41:07 | main                      | INFO     |   fact_commandes : 48,785 lignes
+2026-05-01 12:41:07 | main                      | INFO     | >>> [3/3] CHARGEMENT dans PostgreSQL
+2026-05-01 12:41:09 | loader                    | INFO     | Connexion PostgreSQL prête
+2026-05-01 12:41:09 | loader                    | INFO     | Création du schéma DWH dans PostgreSQL...
+2026-05-01 12:41:11 | loader                    | INFO     | Schéma créé ✓
+2026-05-01 12:41:15 | loader                    | INFO     | [dim_temps] 4383 lignes chargées ✓
+2026-05-01 12:41:16 | loader                    | INFO     | [dim_region] 30 lignes chargées ✓
+2026-05-01 12:41:19 | loader                    | INFO     | [dim_client] 5000 lignes chargées ✓
+2026-05-01 12:41:19 | loader                    | INFO     | [dim_produit] 50 lignes chargées ✓
+2026-05-01 12:41:45 | loader                    | INFO     | [fact_commandes] 48785 lignes chargées ✓
+2026-05-01 12:41:45 | loader                    | INFO     | Création des vues matérialisées...
+2026-05-01 12:41:47 | loader                    | INFO     | Vues matérialisées créées ✓
+2026-05-01 12:41:48 | loader                    | INFO     | Vue 'mv_ventes_region' rafraîchie ✓
+2026-05-01 12:41:49 | loader                    | INFO     | Vue 'mv_perf_categorie' rafraîchie ✓
+2026-05-01 12:41:49 | loader                    | INFO     | Vue 'mv_perf_mensuelle' rafraîchie ✓
+2026-05-01 12:41:50 | main                      | INFO     | ╔══════════════════════════════════════════════════╗
+2026-05-01 12:41:50 | main                      | INFO     | ║   PIPELINE TERMINÉ AVEC SUCCÈS ✓                ║
+2026-05-01 12:41:50 | main                      | INFO     | ╚══════════════════════════════════════════════════╝
+2026-05-02 20:51:57 | main                      | INFO     | ╔══════════════════════════════════════════════════╗
+2026-05-02 20:51:57 | main                      | INFO     | ║       PIPELINE ETL MEXORA — DÉMARRAGE           ║
+2026-05-02 20:51:57 | main                      | INFO     | ╚══════════════════════════════════════════════════╝
+2026-05-02 20:51:57 | main                      | INFO     | >>> [1/3] EXTRACTION depuis data/raw/
+2026-05-02 20:51:57 | extractor                 | INFO     | =======================================================
+2026-05-02 20:51:57 | extractor                 | INFO     |   EXTRACTION — DÉMARRAGE
+2026-05-02 20:51:57 | extractor                 | INFO     | =======================================================
+2026-05-02 20:51:57 | extractor                 | INFO     | Lecture commandes : C:\Users\khaoula\Desktop\Mexora_DataWerehouse\mexora_DatawereHouse\data\raw\commandes_mexora.csv
+2026-05-02 20:51:58 | extractor                 | INFO     | commandes brutes : 51500 lignes | colonnes : ['id_commande', 'id_client', 'id_produit', 'date_commande', 'quantite', 'prix_unitaire', 'statut', 'ville_livraison', 'mode_paiement', 'id_livreur', 'date_livraison']
+2026-05-02 20:51:58 | extractor                 | DEBUG    | [commandes] Champs vides détectés :
+id_livreur         3626
+date_livraison    23657
+2026-05-02 20:51:58 | extractor                 | INFO     | Lecture clients : C:\Users\khaoula\Desktop\Mexora_DataWerehouse\mexora_DatawereHouse\data\raw\clients_mexora.csv
+2026-05-02 20:51:58 | extractor                 | INFO     | clients bruts : 5188 lignes | colonnes : ['id_client', 'nom', 'prenom', 'email', 'date_naissance', 'sexe', 'ville', 'telephone', 'date_inscription', 'canal_acquisition']
+2026-05-02 20:51:58 | extractor                 | DEBUG    | [clients] Champs vides détectés :
+date_naissance    50
+2026-05-02 20:51:58 | extractor                 | INFO     | Lecture produits : C:\Users\khaoula\Desktop\Mexora_DataWerehouse\mexora_DatawereHouse\data\raw\produits.json
+2026-05-02 20:51:58 | extractor                 | INFO     | produits bruts : 50 lignes | colonnes : ['id_produit', 'nom', 'categorie', 'sous_categorie', 'marque', 'fournisseur', 'prix_catalogue', 'origine_pays', 'date_creation', 'actif']
+2026-05-02 20:51:58 | extractor                 | INFO     | Lecture régions : C:\Users\khaoula\Desktop\Mexora_DataWerehouse\mexora_DatawereHouse\data\raw\regions_maroc.csv
+2026-05-02 20:51:58 | extractor                 | INFO     | regions : 30 lignes | colonnes : ['code_ville', 'nom_ville_standard', 'province', 'region_admin', 'zone_geo', 'population', 'code_postal']
+2026-05-02 20:51:58 | extractor                 | INFO     |   EXTRACTION — TERMINÉE ✓
+2026-05-02 20:51:58 | extractor                 | INFO     | =======================================================
+2026-05-02 20:51:58 | main                      | INFO     | >>> [2/3] TRANSFORMATION
+2026-05-02 20:51:58 | clean_clients             | INFO     | ── Nettoyage CLIENTS démarré ──
+2026-05-02 20:51:58 | clean_clients             | INFO     | [1] Doublons (même email) supprimés : 188
+2026-05-02 20:51:58 | clean_clients             | INFO     | [2] Sexe normalisé → M/F/Inconnu
+2026-05-02 20:51:58 | clean_clients             | INFO     | [3] Dates naissance invalides mises à NaT : 187
+2026-05-02 20:51:58 | clean_clients             | INFO     | [4] Emails invalides détectés : 399
+2026-05-02 20:51:58 | clean_clients             | INFO     | [5] Villes harmonisées
+2026-05-02 20:51:58 | clean_clients             | INFO     | ── CLIENTS : 5188 → 5000 lignes après nettoyage ──
+2026-05-02 20:51:58 | clean_produits            | INFO     | ── Nettoyage PRODUITS démarré ──
+2026-05-02 20:51:58 | clean_produits            | INFO     | [1] Catégories normalisées (title case)
+2026-05-02 20:51:58 | clean_produits            | INFO     | [2] Produits inactifs (actif=False) : 6 — conservés pour gestion SCD
+2026-05-02 20:51:58 | clean_produits            | INFO     | [3] Prix catalogue nuls remplacés par 0.0 : 5
+2026-05-02 20:51:58 | clean_produits            | INFO     | ── PRODUITS : 50 → 50 lignes après nettoyage ──
+2026-05-02 20:51:58 | clean_commandes           | INFO     | ── Nettoyage COMMANDES démarré ──
+2026-05-02 20:51:58 | clean_commandes           | INFO     | [1] Doublons supprimés : 1500
+2026-05-02 20:52:27 | clean_commandes           | INFO     | [2] Dates commande non parsées : 0
+2026-05-02 20:52:27 | clean_commandes           | INFO     | [2] Lignes supprimées (date invalide) : 0
+2026-05-02 20:52:27 | clean_commandes           | INFO     | [3] Villes de livraison harmonisées
+2026-05-02 20:52:27 | clean_commandes           | INFO     | [4] id_livreur manquants remplacés : 3499
+2026-05-02 20:52:27 | clean_commandes           | INFO     | [5] Lignes supprimées (quantité ≤ 0) : 717
+2026-05-02 20:52:27 | clean_commandes           | INFO     | [6] Lignes supprimées (prix = 0) : 498
+2026-05-02 20:52:28 | clean_commandes           | INFO     | [7] Statuts non mappés (→ 'inconnu') : 0
+2026-05-02 20:52:28 | clean_commandes           | INFO     | ── COMMANDES : 51500 → 48785 lignes après nettoyage ──
+2026-05-02 20:52:28 | build_dimensions          | INFO     | Construction dim_temps...
+2026-05-02 20:52:28 | build_dimensions          | INFO     | dim_temps : 4383 lignes
+2026-05-02 20:52:28 | build_dimensions          | INFO     | Construction dim_region...
+2026-05-02 20:52:28 | build_dimensions          | INFO     | dim_region : 30 lignes
+2026-05-02 20:52:28 | build_dimensions          | INFO     | Construction dim_client (SCD Type 2)...
+2026-05-02 20:52:28 | build_dimensions          | INFO     | dim_client : 5000 lignes (version initiale)
+2026-05-02 20:52:28 | build_dimensions          | INFO     | Construction dim_produit (SCD Type 1)...
+2026-05-02 20:52:28 | build_dimensions          | INFO     | dim_produit : 50 lignes dont 6 inactifs (conservés pour SCD)
+2026-05-02 20:52:28 | build_dimensions          | INFO     | Construction fact_commandes...
+2026-05-02 20:52:29 | build_dimensions          | WARNING  | id_client sans correspondance dans dim_client : 200
+2026-05-02 20:52:29 | build_dimensions          | INFO     | fact_commandes : 48785 lignes
+2026-05-02 20:52:29 | main                      | INFO     |   dim_temps    :    4,383 lignes
+2026-05-02 20:52:29 | main                      | INFO     |   dim_region   :       30 lignes
+2026-05-02 20:52:29 | main                      | INFO     |   dim_client   :    5,000 lignes
+2026-05-02 20:52:29 | main                      | INFO     |   dim_produit  :       50 lignes
+2026-05-02 20:52:29 | main                      | INFO     |   fact_commandes : 48,785 lignes
+2026-05-02 20:52:29 | main                      | INFO     | >>> [3/3] CHARGEMENT dans PostgreSQL
+2026-05-02 20:52:31 | loader                    | INFO     | Connexion PostgreSQL prête
+2026-05-02 20:52:31 | loader                    | INFO     | Création du schéma DWH dans PostgreSQL...
+2026-05-02 20:52:31 | loader                    | INFO     | Schéma créé ✓
+2026-05-02 20:52:32 | loader                    | ERROR    | Erreur chargement 'dim_temps' : (psycopg2.errors.DependentObjectsStillExist) ERREUR:  n'a pas pu supprimer table dwh_mexora.dim_temps car d'autres objets en dépendent
+DETAIL:  contrainte fait_commandes_id_temps_fkey sur table dwh_mexora.fait_commandes dépend de table dwh_mexora.dim_temps
+vue matérialisée reporting_mexora.mv_ca_mensuel dépend de table dwh_mexora.dim_temps
+vue matérialisée reporting_mexora.mv_top_produits dépend de table dwh_mexora.dim_temps
+vue matérialisée reporting_mexora.mv_performance_livreurs dépend de table dwh_mexora.dim_temps
+HINT:  Utilisez DROP ... CASCADE pour supprimer aussi les objets dépendants.
+
+[SQL: 
+DROP TABLE dwh_mexora.dim_temps]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-05-02 20:52:32 | main                      | ERROR    | ERREUR CRITIQUE — Pipeline interrompu : (psycopg2.errors.DependentObjectsStillExist) ERREUR:  n'a pas pu supprimer table dwh_mexora.dim_temps car d'autres objets en dépendent
+DETAIL:  contrainte fait_commandes_id_temps_fkey sur table dwh_mexora.fait_commandes dépend de table dwh_mexora.dim_temps
+vue matérialisée reporting_mexora.mv_ca_mensuel dépend de table dwh_mexora.dim_temps
+vue matérialisée reporting_mexora.mv_top_produits dépend de table dwh_mexora.dim_temps
+vue matérialisée reporting_mexora.mv_performance_livreurs dépend de table dwh_mexora.dim_temps
+HINT:  Utilisez DROP ... CASCADE pour supprimer aussi les objets dépendants.
+
+[SQL: 
+DROP TABLE dwh_mexora.dim_temps]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+Traceback (most recent call last):
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.errors.DependentObjectsStillExist: ERREUR:  n'a pas pu supprimer table dwh_mexora.dim_temps car d'autres objets en dépendent
+DETAIL:  contrainte fait_commandes_id_temps_fkey sur table dwh_mexora.fait_commandes dépend de table dwh_mexora.dim_temps
+vue matérialisée reporting_mexora.mv_ca_mensuel dépend de table dwh_mexora.dim_temps
+vue matérialisée reporting_mexora.mv_top_produits dépend de table dwh_mexora.dim_temps
+vue matérialisée reporting_mexora.mv_performance_livreurs dépend de table dwh_mexora.dim_temps
+HINT:  Utilisez DROP ... CASCADE pour supprimer aussi les objets dépendants.
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\khaoula\Desktop\Mexora_DataWerehouse\mexora_DatawereHouse\main.py", line 93, in run_etl
+    load_table(dim_temps,   "dim_temps",    engine, mode="replace")
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\khaoula\Desktop\Mexora_DataWerehouse\mexora_DatawereHouse\load\loader.py", line 224, in load_table
+            df.to_sql(
+            ~~~~~~~~~^
+        table,
+        ^^^^^^
+    ...<5 lines>...
+        chunksize=1000,
+        ^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\pandas\core\generic.py", line 3109, in to_sql
+    return sql.to_sql(
+           ~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<8 lines>...
+        method=method,
+        ^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\pandas\io\sql.py", line 844, in to_sql
+    return pandas_sql.to_sql(
+           ~~~~~~~~~~~~~~~~~^
+        frame,
+        ^^^^^^
+    ...<9 lines>...
+        **engine_kwargs,
+        ^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\pandas\io\sql.py", line 2020, in to_sql
+    table = self.prep_table(
+        frame=frame,
+    ...<5 lines>...
+        dtype=dtype,
+    )
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\pandas\io\sql.py", line 1924, in prep_table
+    table.create()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\pandas\io\sql.py", line 990, in create
+    self.pd_sql.drop_table(self.name, self.schema)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\pandas\io\sql.py", line 2075, in drop_table
+    self.get_table(table_name, schema).drop(bind=self.con)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\sql\schema.py", line 1300, in drop
+    bind._run_ddl_visitor(ddl.SchemaDropper, self, checkfirst=checkfirst)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\engine\base.py", line 2467, in _run_ddl_visitor
+    ).traverse_single(element)
+      ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\sql\visitors.py", line 661, in traverse_single
+    return meth(obj, **kw)
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\sql\ddl.py", line 1209, in visit_table
+    DropTable(table)._invoke_with(self.connection)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\sql\ddl.py", line 321, in _invoke_with
+    return bind.execute(self)
+           ~~~~~~~~~~~~^^^^^^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\sql\ddl.py", line 187, in _execute_on_connection
+    return connection._execute_ddl(
+           ~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\engine\base.py", line 1530, in _execute_ddl
+    ret = self._execute_context(
+        dialect,
+    ...<4 lines>...
+        compiled,
+    )
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.InternalError: (psycopg2.errors.DependentObjectsStillExist) ERREUR:  n'a pas pu supprimer table dwh_mexora.dim_temps car d'autres objets en dépendent
+DETAIL:  contrainte fait_commandes_id_temps_fkey sur table dwh_mexora.fait_commandes dépend de table dwh_mexora.dim_temps
+vue matérialisée reporting_mexora.mv_ca_mensuel dépend de table dwh_mexora.dim_temps
+vue matérialisée reporting_mexora.mv_top_produits dépend de table dwh_mexora.dim_temps
+vue matérialisée reporting_mexora.mv_performance_livreurs dépend de table dwh_mexora.dim_temps
+HINT:  Utilisez DROP ... CASCADE pour supprimer aussi les objets dépendants.
+
+[SQL: 
+DROP TABLE dwh_mexora.dim_temps]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-05-02 21:00:36 | main                      | INFO     | ╔══════════════════════════════════════════════════╗
+2026-05-02 21:00:36 | main                      | INFO     | ║       PIPELINE ETL MEXORA — DÉMARRAGE           ║
+2026-05-02 21:00:36 | main                      | INFO     | ╚══════════════════════════════════════════════════╝
+2026-05-02 21:00:36 | main                      | INFO     | >>> [1/3] EXTRACTION depuis data/raw/
+2026-05-02 21:00:36 | extractor                 | INFO     | =======================================================
+2026-05-02 21:00:36 | extractor                 | INFO     |   EXTRACTION — DÉMARRAGE
+2026-05-02 21:00:36 | extractor                 | INFO     | =======================================================
+2026-05-02 21:00:36 | extractor                 | INFO     | Lecture commandes : C:\Users\khaoula\Desktop\Mexora_DataWerehouse\mexora_DatawereHouse\data\raw\commandes_mexora.csv
+2026-05-02 21:00:36 | extractor                 | INFO     | commandes brutes : 51500 lignes | colonnes : ['id_commande', 'id_client', 'id_produit', 'date_commande', 'quantite', 'prix_unitaire', 'statut', 'ville_livraison', 'mode_paiement', 'id_livreur', 'date_livraison']
+2026-05-02 21:00:36 | extractor                 | DEBUG    | [commandes] Champs vides détectés :
+id_livreur         3626
+date_livraison    23657
+2026-05-02 21:00:36 | extractor                 | INFO     | Lecture clients : C:\Users\khaoula\Desktop\Mexora_DataWerehouse\mexora_DatawereHouse\data\raw\clients_mexora.csv
+2026-05-02 21:00:36 | extractor                 | INFO     | clients bruts : 5188 lignes | colonnes : ['id_client', 'nom', 'prenom', 'email', 'date_naissance', 'sexe', 'ville', 'telephone', 'date_inscription', 'canal_acquisition']
+2026-05-02 21:00:36 | extractor                 | DEBUG    | [clients] Champs vides détectés :
+date_naissance    50
+2026-05-02 21:00:36 | extractor                 | INFO     | Lecture produits : C:\Users\khaoula\Desktop\Mexora_DataWerehouse\mexora_DatawereHouse\data\raw\produits.json
+2026-05-02 21:00:36 | extractor                 | INFO     | produits bruts : 50 lignes | colonnes : ['id_produit', 'nom', 'categorie', 'sous_categorie', 'marque', 'fournisseur', 'prix_catalogue', 'origine_pays', 'date_creation', 'actif']
+2026-05-02 21:00:36 | extractor                 | INFO     | Lecture régions : C:\Users\khaoula\Desktop\Mexora_DataWerehouse\mexora_DatawereHouse\data\raw\regions_maroc.csv
+2026-05-02 21:00:36 | extractor                 | INFO     | regions : 30 lignes | colonnes : ['code_ville', 'nom_ville_standard', 'province', 'region_admin', 'zone_geo', 'population', 'code_postal']
+2026-05-02 21:00:36 | extractor                 | INFO     |   EXTRACTION — TERMINÉE ✓
+2026-05-02 21:00:36 | extractor                 | INFO     | =======================================================
+2026-05-02 21:00:36 | main                      | INFO     | >>> [2/3] TRANSFORMATION
+2026-05-02 21:00:36 | clean_clients             | INFO     | ── Nettoyage CLIENTS démarré ──
+2026-05-02 21:00:36 | clean_clients             | INFO     | [1] Doublons (même email) supprimés : 188
+2026-05-02 21:00:36 | clean_clients             | INFO     | [2] Sexe normalisé → M/F/Inconnu
+2026-05-02 21:00:36 | clean_clients             | INFO     | [3] Dates naissance invalides mises à NaT : 187
+2026-05-02 21:00:36 | clean_clients             | INFO     | [4] Emails invalides détectés : 399
+2026-05-02 21:00:36 | clean_clients             | INFO     | [5] Villes harmonisées
+2026-05-02 21:00:36 | clean_clients             | INFO     | ── CLIENTS : 5188 → 5000 lignes après nettoyage ──
+2026-05-02 21:00:36 | clean_produits            | INFO     | ── Nettoyage PRODUITS démarré ──
+2026-05-02 21:00:36 | clean_produits            | INFO     | [1] Catégories normalisées (title case)
+2026-05-02 21:00:36 | clean_produits            | INFO     | [2] Produits inactifs (actif=False) : 6 — conservés pour gestion SCD
+2026-05-02 21:00:36 | clean_produits            | INFO     | [3] Prix catalogue nuls remplacés par 0.0 : 5
+2026-05-02 21:00:36 | clean_produits            | INFO     | ── PRODUITS : 50 → 50 lignes après nettoyage ──
+2026-05-02 21:00:36 | clean_commandes           | INFO     | ── Nettoyage COMMANDES démarré ──
+2026-05-02 21:00:36 | clean_commandes           | INFO     | [1] Doublons supprimés : 1500
+2026-05-02 21:01:01 | clean_commandes           | INFO     | [2] Dates commande non parsées : 0
+2026-05-02 21:01:01 | clean_commandes           | INFO     | [2] Lignes supprimées (date invalide) : 0
+2026-05-02 21:01:01 | clean_commandes           | INFO     | [3] Villes de livraison harmonisées
+2026-05-02 21:01:01 | clean_commandes           | INFO     | [4] id_livreur manquants remplacés : 3499
+2026-05-02 21:01:02 | clean_commandes           | INFO     | [5] Lignes supprimées (quantité ≤ 0) : 717
+2026-05-02 21:01:02 | clean_commandes           | INFO     | [6] Lignes supprimées (prix = 0) : 498
+2026-05-02 21:01:02 | clean_commandes           | INFO     | [7] Statuts non mappés (→ 'inconnu') : 0
+2026-05-02 21:01:02 | clean_commandes           | INFO     | ── COMMANDES : 51500 → 48785 lignes après nettoyage ──
+2026-05-02 21:01:02 | build_dimensions          | INFO     | Construction dim_temps...
+2026-05-02 21:01:02 | build_dimensions          | INFO     | dim_temps : 4383 lignes
+2026-05-02 21:01:02 | build_dimensions          | INFO     | Construction dim_region...
+2026-05-02 21:01:02 | build_dimensions          | INFO     | dim_region : 30 lignes
+2026-05-02 21:01:02 | build_dimensions          | INFO     | Construction dim_client (SCD Type 2)...
+2026-05-02 21:01:02 | build_dimensions          | INFO     | dim_client : 5000 lignes (version initiale)
+2026-05-02 21:01:02 | build_dimensions          | INFO     | Construction dim_produit (SCD Type 1)...
+2026-05-02 21:01:02 | build_dimensions          | INFO     | dim_produit : 50 lignes dont 6 inactifs (conservés pour SCD)
+2026-05-02 21:01:02 | build_dimensions          | INFO     | Construction fact_commandes...
+2026-05-02 21:01:02 | build_dimensions          | WARNING  | id_client sans correspondance dans dim_client : 200
+2026-05-02 21:01:02 | build_dimensions          | INFO     | fact_commandes : 48785 lignes
+2026-05-02 21:01:02 | main                      | INFO     |   dim_temps    :    4,383 lignes
+2026-05-02 21:01:02 | main                      | INFO     |   dim_region   :       30 lignes
+2026-05-02 21:01:02 | main                      | INFO     |   dim_client   :    5,000 lignes
+2026-05-02 21:01:02 | main                      | INFO     |   dim_produit  :       50 lignes
+2026-05-02 21:01:02 | main                      | INFO     |   fact_commandes : 48,785 lignes
+2026-05-02 21:01:02 | main                      | INFO     | >>> [3/3] CHARGEMENT dans PostgreSQL
+2026-05-02 21:01:03 | loader                    | INFO     | Connexion PostgreSQL prête
+2026-05-02 21:01:03 | loader                    | INFO     | Création du schéma DWH dans PostgreSQL...
+2026-05-02 21:01:03 | loader                    | INFO     | Schéma créé ✓
+2026-05-02 21:01:03 | loader                    | ERROR    | Erreur chargement 'dim_temps' : (psycopg2.errors.DependentObjectsStillExist) ERREUR:  n'a pas pu supprimer table dwh_mexora.dim_temps car d'autres objets en dépendent
+DETAIL:  contrainte fait_commandes_id_temps_fkey sur table dwh_mexora.fait_commandes dépend de table dwh_mexora.dim_temps
+vue matérialisée reporting_mexora.mv_ca_mensuel dépend de table dwh_mexora.dim_temps
+vue matérialisée reporting_mexora.mv_top_produits dépend de table dwh_mexora.dim_temps
+vue matérialisée reporting_mexora.mv_performance_livreurs dépend de table dwh_mexora.dim_temps
+HINT:  Utilisez DROP ... CASCADE pour supprimer aussi les objets dépendants.
+
+[SQL: 
+DROP TABLE dwh_mexora.dim_temps]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-05-02 21:01:03 | main                      | ERROR    | ERREUR CRITIQUE — Pipeline interrompu : (psycopg2.errors.DependentObjectsStillExist) ERREUR:  n'a pas pu supprimer table dwh_mexora.dim_temps car d'autres objets en dépendent
+DETAIL:  contrainte fait_commandes_id_temps_fkey sur table dwh_mexora.fait_commandes dépend de table dwh_mexora.dim_temps
+vue matérialisée reporting_mexora.mv_ca_mensuel dépend de table dwh_mexora.dim_temps
+vue matérialisée reporting_mexora.mv_top_produits dépend de table dwh_mexora.dim_temps
+vue matérialisée reporting_mexora.mv_performance_livreurs dépend de table dwh_mexora.dim_temps
+HINT:  Utilisez DROP ... CASCADE pour supprimer aussi les objets dépendants.
+
+[SQL: 
+DROP TABLE dwh_mexora.dim_temps]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+Traceback (most recent call last):
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.errors.DependentObjectsStillExist: ERREUR:  n'a pas pu supprimer table dwh_mexora.dim_temps car d'autres objets en dépendent
+DETAIL:  contrainte fait_commandes_id_temps_fkey sur table dwh_mexora.fait_commandes dépend de table dwh_mexora.dim_temps
+vue matérialisée reporting_mexora.mv_ca_mensuel dépend de table dwh_mexora.dim_temps
+vue matérialisée reporting_mexora.mv_top_produits dépend de table dwh_mexora.dim_temps
+vue matérialisée reporting_mexora.mv_performance_livreurs dépend de table dwh_mexora.dim_temps
+HINT:  Utilisez DROP ... CASCADE pour supprimer aussi les objets dépendants.
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\khaoula\Desktop\Mexora_DataWerehouse\mexora_DatawereHouse\main.py", line 93, in run_etl
+    load_table(dim_temps,   "dim_temps",    engine, mode="replace")
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\khaoula\Desktop\Mexora_DataWerehouse\mexora_DatawereHouse\load\loader.py", line 224, in load_table
+            df.to_sql(
+            ~~~~~~~~~^
+        table,
+        ^^^^^^
+    ...<5 lines>...
+        chunksize=1000,
+        ^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\pandas\core\generic.py", line 3109, in to_sql
+    return sql.to_sql(
+           ~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<8 lines>...
+        method=method,
+        ^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\pandas\io\sql.py", line 844, in to_sql
+    return pandas_sql.to_sql(
+           ~~~~~~~~~~~~~~~~~^
+        frame,
+        ^^^^^^
+    ...<9 lines>...
+        **engine_kwargs,
+        ^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\pandas\io\sql.py", line 2020, in to_sql
+    table = self.prep_table(
+        frame=frame,
+    ...<5 lines>...
+        dtype=dtype,
+    )
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\pandas\io\sql.py", line 1924, in prep_table
+    table.create()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\pandas\io\sql.py", line 990, in create
+    self.pd_sql.drop_table(self.name, self.schema)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\pandas\io\sql.py", line 2075, in drop_table
+    self.get_table(table_name, schema).drop(bind=self.con)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\sql\schema.py", line 1300, in drop
+    bind._run_ddl_visitor(ddl.SchemaDropper, self, checkfirst=checkfirst)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\engine\base.py", line 2467, in _run_ddl_visitor
+    ).traverse_single(element)
+      ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\sql\visitors.py", line 661, in traverse_single
+    return meth(obj, **kw)
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\sql\ddl.py", line 1209, in visit_table
+    DropTable(table)._invoke_with(self.connection)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\sql\ddl.py", line 321, in _invoke_with
+    return bind.execute(self)
+           ~~~~~~~~~~~~^^^^^^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\sql\ddl.py", line 187, in _execute_on_connection
+    return connection._execute_ddl(
+           ~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\engine\base.py", line 1530, in _execute_ddl
+    ret = self._execute_context(
+        dialect,
+    ...<4 lines>...
+        compiled,
+    )
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.InternalError: (psycopg2.errors.DependentObjectsStillExist) ERREUR:  n'a pas pu supprimer table dwh_mexora.dim_temps car d'autres objets en dépendent
+DETAIL:  contrainte fait_commandes_id_temps_fkey sur table dwh_mexora.fait_commandes dépend de table dwh_mexora.dim_temps
+vue matérialisée reporting_mexora.mv_ca_mensuel dépend de table dwh_mexora.dim_temps
+vue matérialisée reporting_mexora.mv_top_produits dépend de table dwh_mexora.dim_temps
+vue matérialisée reporting_mexora.mv_performance_livreurs dépend de table dwh_mexora.dim_temps
+HINT:  Utilisez DROP ... CASCADE pour supprimer aussi les objets dépendants.
+
+[SQL: 
+DROP TABLE dwh_mexora.dim_temps]
+(Background on this error at: https://sqlalche.me/e/20/2j85)
+2026-05-02 21:03:15 | main                      | INFO     | ╔══════════════════════════════════════════════════╗
+2026-05-02 21:03:15 | main                      | INFO     | ║       PIPELINE ETL MEXORA — DÉMARRAGE           ║
+2026-05-02 21:03:15 | main                      | INFO     | ╚══════════════════════════════════════════════════╝
+2026-05-02 21:03:15 | main                      | INFO     | >>> [1/3] EXTRACTION depuis data/raw/
+2026-05-02 21:03:15 | extractor                 | INFO     | =======================================================
+2026-05-02 21:03:15 | extractor                 | INFO     |   EXTRACTION — DÉMARRAGE
+2026-05-02 21:03:15 | extractor                 | INFO     | =======================================================
+2026-05-02 21:03:15 | extractor                 | INFO     | Lecture commandes : C:\Users\khaoula\Desktop\Mexora_DataWerehouse\mexora_DatawereHouse\data\raw\commandes_mexora.csv
+2026-05-02 21:03:15 | extractor                 | INFO     | commandes brutes : 51500 lignes | colonnes : ['id_commande', 'id_client', 'id_produit', 'date_commande', 'quantite', 'prix_unitaire', 'statut', 'ville_livraison', 'mode_paiement', 'id_livreur', 'date_livraison']
+2026-05-02 21:03:15 | extractor                 | DEBUG    | [commandes] Champs vides détectés :
+id_livreur         3626
+date_livraison    23657
+2026-05-02 21:03:15 | extractor                 | INFO     | Lecture clients : C:\Users\khaoula\Desktop\Mexora_DataWerehouse\mexora_DatawereHouse\data\raw\clients_mexora.csv
+2026-05-02 21:03:15 | extractor                 | INFO     | clients bruts : 5188 lignes | colonnes : ['id_client', 'nom', 'prenom', 'email', 'date_naissance', 'sexe', 'ville', 'telephone', 'date_inscription', 'canal_acquisition']
+2026-05-02 21:03:15 | extractor                 | DEBUG    | [clients] Champs vides détectés :
+date_naissance    50
+2026-05-02 21:03:15 | extractor                 | INFO     | Lecture produits : C:\Users\khaoula\Desktop\Mexora_DataWerehouse\mexora_DatawereHouse\data\raw\produits.json
+2026-05-02 21:03:15 | extractor                 | INFO     | produits bruts : 50 lignes | colonnes : ['id_produit', 'nom', 'categorie', 'sous_categorie', 'marque', 'fournisseur', 'prix_catalogue', 'origine_pays', 'date_creation', 'actif']
+2026-05-02 21:03:15 | extractor                 | INFO     | Lecture régions : C:\Users\khaoula\Desktop\Mexora_DataWerehouse\mexora_DatawereHouse\data\raw\regions_maroc.csv
+2026-05-02 21:03:15 | extractor                 | INFO     | regions : 30 lignes | colonnes : ['code_ville', 'nom_ville_standard', 'province', 'region_admin', 'zone_geo', 'population', 'code_postal']
+2026-05-02 21:03:15 | extractor                 | INFO     |   EXTRACTION — TERMINÉE ✓
+2026-05-02 21:03:15 | extractor                 | INFO     | =======================================================
+2026-05-02 21:03:15 | main                      | INFO     | >>> [2/3] TRANSFORMATION
+2026-05-02 21:03:15 | clean_clients             | INFO     | ── Nettoyage CLIENTS démarré ──
+2026-05-02 21:03:15 | clean_clients             | INFO     | [1] Doublons (même email) supprimés : 188
+2026-05-02 21:03:15 | clean_clients             | INFO     | [2] Sexe normalisé → M/F/Inconnu
+2026-05-02 21:03:15 | clean_clients             | INFO     | [3] Dates naissance invalides mises à NaT : 187
+2026-05-02 21:03:15 | clean_clients             | INFO     | [4] Emails invalides détectés : 399
+2026-05-02 21:03:15 | clean_clients             | INFO     | [5] Villes harmonisées
+2026-05-02 21:03:15 | clean_clients             | INFO     | ── CLIENTS : 5188 → 5000 lignes après nettoyage ──
+2026-05-02 21:03:15 | clean_produits            | INFO     | ── Nettoyage PRODUITS démarré ──
+2026-05-02 21:03:15 | clean_produits            | INFO     | [1] Catégories normalisées (title case)
+2026-05-02 21:03:15 | clean_produits            | INFO     | [2] Produits inactifs (actif=False) : 6 — conservés pour gestion SCD
+2026-05-02 21:03:15 | clean_produits            | INFO     | [3] Prix catalogue nuls remplacés par 0.0 : 5
+2026-05-02 21:03:15 | clean_produits            | INFO     | ── PRODUITS : 50 → 50 lignes après nettoyage ──
+2026-05-02 21:03:15 | clean_commandes           | INFO     | ── Nettoyage COMMANDES démarré ──
+2026-05-02 21:03:15 | clean_commandes           | INFO     | [1] Doublons supprimés : 1500
+2026-05-02 21:03:38 | clean_commandes           | INFO     | [2] Dates commande non parsées : 0
+2026-05-02 21:03:38 | clean_commandes           | INFO     | [2] Lignes supprimées (date invalide) : 0
+2026-05-02 21:03:38 | clean_commandes           | INFO     | [3] Villes de livraison harmonisées
+2026-05-02 21:03:38 | clean_commandes           | INFO     | [4] id_livreur manquants remplacés : 3499
+2026-05-02 21:03:38 | clean_commandes           | INFO     | [5] Lignes supprimées (quantité ≤ 0) : 717
+2026-05-02 21:03:38 | clean_commandes           | INFO     | [6] Lignes supprimées (prix = 0) : 498
+2026-05-02 21:03:39 | clean_commandes           | INFO     | [7] Statuts non mappés (→ 'inconnu') : 0
+2026-05-02 21:03:39 | clean_commandes           | INFO     | ── COMMANDES : 51500 → 48785 lignes après nettoyage ──
+2026-05-02 21:03:39 | build_dimensions          | INFO     | Construction dim_temps...
+2026-05-02 21:03:39 | build_dimensions          | INFO     | dim_temps : 4383 lignes
+2026-05-02 21:03:39 | build_dimensions          | INFO     | Construction dim_region...
+2026-05-02 21:03:39 | build_dimensions          | INFO     | dim_region : 30 lignes
+2026-05-02 21:03:39 | build_dimensions          | INFO     | Construction dim_client (SCD Type 2)...
+2026-05-02 21:03:39 | build_dimensions          | INFO     | dim_client : 5000 lignes (version initiale)
+2026-05-02 21:03:39 | build_dimensions          | INFO     | Construction dim_produit (SCD Type 1)...
+2026-05-02 21:03:39 | build_dimensions          | INFO     | dim_produit : 50 lignes dont 6 inactifs (conservés pour SCD)
+2026-05-02 21:03:39 | build_dimensions          | INFO     | Construction fact_commandes...
+2026-05-02 21:03:39 | build_dimensions          | WARNING  | id_client sans correspondance dans dim_client : 200
+2026-05-02 21:03:39 | build_dimensions          | INFO     | fact_commandes : 48785 lignes
+2026-05-02 21:03:39 | main                      | INFO     |   dim_temps    :    4,383 lignes
+2026-05-02 21:03:39 | main                      | INFO     |   dim_region   :       30 lignes
+2026-05-02 21:03:39 | main                      | INFO     |   dim_client   :    5,000 lignes
+2026-05-02 21:03:39 | main                      | INFO     |   dim_produit  :       50 lignes
+2026-05-02 21:03:39 | main                      | INFO     |   fact_commandes : 48,785 lignes
+2026-05-02 21:03:39 | main                      | INFO     | >>> [3/3] CHARGEMENT dans PostgreSQL
+2026-05-02 21:03:39 | loader                    | INFO     | Connexion PostgreSQL prête
+2026-05-02 21:03:39 | loader                    | INFO     | Création du schéma DWH dans PostgreSQL...
+2026-05-02 21:03:40 | loader                    | INFO     | Schéma créé ✓
+2026-05-02 21:03:42 | loader                    | INFO     | [dim_temps] 4383 lignes chargées ✓
+2026-05-02 21:03:42 | loader                    | ERROR    | Erreur chargement 'dim_region' : (psycopg2.errors.UndefinedColumn) ERREUR:  la colonne « code_ville » de la relation « dim_region » n'existe pas
+LINE 1: INSERT INTO dwh_mexora.dim_region (id_region, code_ville, no...
+                                                      ^
+
+[SQL: INSERT INTO dwh_mexora.dim_region (id_region, code_ville, nom_ville_standard, province, region_admin, zone_geo, population, code_postal) VALUES (%(id_region_m0)s, %(code_ville_m0)s, %(nom_ville_standard_m0)s, %(province_m0)s, %(region_admin_m0)s, %(zone_geo_m0)s, %(population_m0)s, %(code_postal_m0)s), (%(id_region_m1)s, %(code_ville_m1)s, %(nom_ville_standard_m1)s, %(province_m1)s, %(region_admin_m1)s, %(zone_geo_m1)s, %(population_m1)s, %(code_postal_m1)s), (%(id_region_m2)s, %(code_ville_m2)s, %(nom_ville_standard_m2)s, %(province_m2)s, %(region_admin_m2)s, %(zone_geo_m2)s, %(population_m2)s, %(code_postal_m2)s), (%(id_region_m3)s, %(code_ville_m3)s, %(nom_ville_standard_m3)s, %(province_m3)s, %(region_admin_m3)s, %(zone_geo_m3)s, %(population_m3)s, %(code_postal_m3)s), (%(id_region_m4)s, %(code_ville_m4)s, %(nom_ville_standard_m4)s, %(province_m4)s, %(region_admin_m4)s, %(zone_geo_m4)s, %(population_m4)s, %(code_postal_m4)s), (%(id_region_m5)s, %(code_ville_m5)s, %(nom_ville_standard_m5)s, %(province_m5)s, %(region_admin_m5)s, %(zone_geo_m5)s, %(population_m5)s, %(code_postal_m5)s), (%(id_region_m6)s, %(code_ville_m6)s, %(nom_ville_standard_m6)s, %(province_m6)s, %(region_admin_m6)s, %(zone_geo_m6)s, %(population_m6)s, %(code_postal_m6)s), (%(id_region_m7)s, %(code_ville_m7)s, %(nom_ville_standard_m7)s, %(province_m7)s, %(region_admin_m7)s, %(zone_geo_m7)s, %(population_m7)s, %(code_postal_m7)s), (%(id_region_m8)s, %(code_ville_m8)s, %(nom_ville_standard_m8)s, %(province_m8)s, %(region_admin_m8)s, %(zone_geo_m8)s, %(population_m8)s, %(code_postal_m8)s), (%(id_region_m9)s, %(code_ville_m9)s, %(nom_ville_standard_m9)s, %(province_m9)s, %(region_admin_m9)s, %(zone_geo_m9)s, %(population_m9)s, %(code_postal_m9)s), (%(id_region_m10)s, %(code_ville_m10)s, %(nom_ville_standard_m10)s, %(province_m10)s, %(region_admin_m10)s, %(zone_geo_m10)s, %(population_m10)s, %(code_postal_m10)s), (%(id_region_m11)s, %(code_ville_m11)s, %(nom_ville_standard_m11)s, %(province_m11)s, %(region_admin_m11)s, %(zone_geo_m11)s, %(population_m11)s, %(code_postal_m11)s), (%(id_region_m12)s, %(code_ville_m12)s, %(nom_ville_standard_m12)s, %(province_m12)s, %(region_admin_m12)s, %(zone_geo_m12)s, %(population_m12)s, %(code_postal_m12)s), (%(id_region_m13)s, %(code_ville_m13)s, %(nom_ville_standard_m13)s, %(province_m13)s, %(region_admin_m13)s, %(zone_geo_m13)s, %(population_m13)s, %(code_postal_m13)s), (%(id_region_m14)s, %(code_ville_m14)s, %(nom_ville_standard_m14)s, %(province_m14)s, %(region_admin_m14)s, %(zone_geo_m14)s, %(population_m14)s, %(code_postal_m14)s), (%(id_region_m15)s, %(code_ville_m15)s, %(nom_ville_standard_m15)s, %(province_m15)s, %(region_admin_m15)s, %(zone_geo_m15)s, %(population_m15)s, %(code_postal_m15)s), (%(id_region_m16)s, %(code_ville_m16)s, %(nom_ville_standard_m16)s, %(province_m16)s, %(region_admin_m16)s, %(zone_geo_m16)s, %(population_m16)s, %(code_postal_m16)s), (%(id_region_m17)s, %(code_ville_m17)s, %(nom_ville_standard_m17)s, %(province_m17)s, %(region_admin_m17)s, %(zone_geo_m17)s, %(population_m17)s, %(code_postal_m17)s), (%(id_region_m18)s, %(code_ville_m18)s, %(nom_ville_standard_m18)s, %(province_m18)s, %(region_admin_m18)s, %(zone_geo_m18)s, %(population_m18)s, %(code_postal_m18)s), (%(id_region_m19)s, %(code_ville_m19)s, %(nom_ville_standard_m19)s, %(province_m19)s, %(region_admin_m19)s, %(zone_geo_m19)s, %(population_m19)s, %(code_postal_m19)s), (%(id_region_m20)s, %(code_ville_m20)s, %(nom_ville_standard_m20)s, %(province_m20)s, %(region_admin_m20)s, %(zone_geo_m20)s, %(population_m20)s, %(code_postal_m20)s), (%(id_region_m21)s, %(code_ville_m21)s, %(nom_ville_standard_m21)s, %(province_m21)s, %(region_admin_m21)s, %(zone_geo_m21)s, %(population_m21)s, %(code_postal_m21)s), (%(id_region_m22)s, %(code_ville_m22)s, %(nom_ville_standard_m22)s, %(province_m22)s, %(region_admin_m22)s, %(zone_geo_m22)s, %(population_m22)s, %(code_postal_m22)s), (%(id_region_m23)s, %(code_ville_m23)s, %(nom_ville_standard_m23)s, %(province_m23)s, %(region_admin_m23)s, %(zone_geo_m23)s, %(population_m23)s, %(code_postal_m23)s), (%(id_region_m24)s, %(code_ville_m24)s, %(nom_ville_standard_m24)s, %(province_m24)s, %(region_admin_m24)s, %(zone_geo_m24)s, %(population_m24)s, %(code_postal_m24)s), (%(id_region_m25)s, %(code_ville_m25)s, %(nom_ville_standard_m25)s, %(province_m25)s, %(region_admin_m25)s, %(zone_geo_m25)s, %(population_m25)s, %(code_postal_m25)s), (%(id_region_m26)s, %(code_ville_m26)s, %(nom_ville_standard_m26)s, %(province_m26)s, %(region_admin_m26)s, %(zone_geo_m26)s, %(population_m26)s, %(code_postal_m26)s), (%(id_region_m27)s, %(code_ville_m27)s, %(nom_ville_standard_m27)s, %(province_m27)s, %(region_admin_m27)s, %(zone_geo_m27)s, %(population_m27)s, %(code_postal_m27)s), (%(id_region_m28)s, %(code_ville_m28)s, %(nom_ville_standard_m28)s, %(province_m28)s, %(region_admin_m28)s, %(zone_geo_m28)s, %(population_m28)s, %(code_postal_m28)s), (%(id_region_m29)s, %(code_ville_m29)s, %(nom_ville_standard_m29)s, %(province_m29)s, %(region_admin_m29)s, %(zone_geo_m29)s, %(population_m29)s, %(code_postal_m29)s)]
+[parameters: {'id_region_m0': 1, 'code_ville_m0': 'CAS', 'nom_ville_standard_m0': 'Casablanca', 'province_m0': 'Casablanca', 'region_admin_m0': 'Casablanca-Settat', 'zone_geo_m0': 'Centre-Ouest', 'population_m0': 3752000, 'code_postal_m0': 20000, 'id_region_m1': 2, 'code_ville_m1': 'RAB', 'nom_ville_standard_m1': 'Rabat', 'province_m1': 'Rabat', 'region_admin_m1': 'Rabat-Salé-Kénitra', 'zone_geo_m1': 'Centre-Nord', 'population_m1': 577827, 'code_postal_m1': 10000, 'id_region_m2': 3, 'code_ville_m2': 'FES', 'nom_ville_standard_m2': 'Fès', 'province_m2': 'Fès', 'region_admin_m2': 'Fès-Meknès', 'zone_geo_m2': 'Centre-Nord', 'population_m2': 1112072, 'code_postal_m2': 30000, 'id_region_m3': 4, 'code_ville_m3': 'MRK', 'nom_ville_standard_m3': 'Marrakech', 'province_m3': 'Marrakech', 'region_admin_m3': 'Marrakech-Safi', 'zone_geo_m3': 'Centre-Sud', 'population_m3': 928850, 'code_postal_m3': 40000, 'id_region_m4': 5, 'code_ville_m4': 'TNG', 'nom_ville_standard_m4': 'Tanger', 'province_m4': 'Tanger-Assilah', 'region_admin_m4': 'Tanger-Tétouan-Al Hoceima', 'zone_geo_m4': 'Nord', 'population_m4': 947952, 'code_postal_m4': 90000, 'id_region_m5': 6, 'code_ville_m5': 'AGA', 'nom_ville_standard_m5': 'Agadir', 'province_m5': 'Agadir-Ida-Ou-Tanane', 'region_admin_m5': 'Souss-Massa', 'zone_geo_m5': 'Sud-Ouest', 'population_m5': 421844, 'code_postal_m5': 80000, 'id_region_m6': 7, 'code_ville_m6': 'MEK' ... 140 parameters truncated ... 'population_m23': 92374, 'code_postal_m23': 52000, 'id_region_m24': 25, 'code_ville_m24': 'GUE', 'nom_ville_standard_m24': 'Guelmim', 'province_m24': 'Guelmim', 'region_admin_m24': 'Guelmim-Oued Noun', 'zone_geo_m24': 'Sud-Ouest', 'population_m24': 118318, 'code_postal_m24': 81000, 'id_region_m25': 26, 'code_ville_m25': 'TAN', 'nom_ville_standard_m25': 'Tan-Tan', 'province_m25': 'Tan-Tan', 'region_admin_m25': 'Guelmim-Oued Noun', 'zone_geo_m25': 'Sud-Ouest', 'population_m25': 56147, 'code_postal_m25': 82000, 'id_region_m26': 27, 'code_ville_m26': 'BER', 'nom_ville_standard_m26': 'Berkane', 'province_m26': 'Berkane', 'region_admin_m26': 'Oriental', 'zone_geo_m26': 'Est', 'population_m26': 108000, 'code_postal_m26': 63000, 'id_region_m27': 28, 'code_ville_m27': 'LAR', 'nom_ville_standard_m27': 'Larache', 'province_m27': 'Larache', 'region_admin_m27': 'Tanger-Tétouan-Al Hoceima', 'zone_geo_m27': 'Nord', 'population_m27': 125008, 'code_postal_m27': 92000, 'id_region_m28': 29, 'code_ville_m28': 'ASI', 'nom_ville_standard_m28': 'Assilah', 'province_m28': 'Tanger-Assilah', 'region_admin_m28': 'Tanger-Tétouan-Al Hoceima', 'zone_geo_m28': 'Nord', 'population_m28': 31147, 'code_postal_m28': 90040, 'id_region_m29': 30, 'code_ville_m29': 'MOH', 'nom_ville_standard_m29': 'Mohammedia', 'province_m29': 'Mohammedia', 'region_admin_m29': 'Casablanca-Settat', 'zone_geo_m29': 'Centre-Ouest', 'population_m29': 208612, 'code_postal_m29': 28800}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2026-05-02 21:03:42 | main                      | ERROR    | ERREUR CRITIQUE — Pipeline interrompu : (psycopg2.errors.UndefinedColumn) ERREUR:  la colonne « code_ville » de la relation « dim_region » n'existe pas
+LINE 1: INSERT INTO dwh_mexora.dim_region (id_region, code_ville, no...
+                                                      ^
+
+[SQL: INSERT INTO dwh_mexora.dim_region (id_region, code_ville, nom_ville_standard, province, region_admin, zone_geo, population, code_postal) VALUES (%(id_region_m0)s, %(code_ville_m0)s, %(nom_ville_standard_m0)s, %(province_m0)s, %(region_admin_m0)s, %(zone_geo_m0)s, %(population_m0)s, %(code_postal_m0)s), (%(id_region_m1)s, %(code_ville_m1)s, %(nom_ville_standard_m1)s, %(province_m1)s, %(region_admin_m1)s, %(zone_geo_m1)s, %(population_m1)s, %(code_postal_m1)s), (%(id_region_m2)s, %(code_ville_m2)s, %(nom_ville_standard_m2)s, %(province_m2)s, %(region_admin_m2)s, %(zone_geo_m2)s, %(population_m2)s, %(code_postal_m2)s), (%(id_region_m3)s, %(code_ville_m3)s, %(nom_ville_standard_m3)s, %(province_m3)s, %(region_admin_m3)s, %(zone_geo_m3)s, %(population_m3)s, %(code_postal_m3)s), (%(id_region_m4)s, %(code_ville_m4)s, %(nom_ville_standard_m4)s, %(province_m4)s, %(region_admin_m4)s, %(zone_geo_m4)s, %(population_m4)s, %(code_postal_m4)s), (%(id_region_m5)s, %(code_ville_m5)s, %(nom_ville_standard_m5)s, %(province_m5)s, %(region_admin_m5)s, %(zone_geo_m5)s, %(population_m5)s, %(code_postal_m5)s), (%(id_region_m6)s, %(code_ville_m6)s, %(nom_ville_standard_m6)s, %(province_m6)s, %(region_admin_m6)s, %(zone_geo_m6)s, %(population_m6)s, %(code_postal_m6)s), (%(id_region_m7)s, %(code_ville_m7)s, %(nom_ville_standard_m7)s, %(province_m7)s, %(region_admin_m7)s, %(zone_geo_m7)s, %(population_m7)s, %(code_postal_m7)s), (%(id_region_m8)s, %(code_ville_m8)s, %(nom_ville_standard_m8)s, %(province_m8)s, %(region_admin_m8)s, %(zone_geo_m8)s, %(population_m8)s, %(code_postal_m8)s), (%(id_region_m9)s, %(code_ville_m9)s, %(nom_ville_standard_m9)s, %(province_m9)s, %(region_admin_m9)s, %(zone_geo_m9)s, %(population_m9)s, %(code_postal_m9)s), (%(id_region_m10)s, %(code_ville_m10)s, %(nom_ville_standard_m10)s, %(province_m10)s, %(region_admin_m10)s, %(zone_geo_m10)s, %(population_m10)s, %(code_postal_m10)s), (%(id_region_m11)s, %(code_ville_m11)s, %(nom_ville_standard_m11)s, %(province_m11)s, %(region_admin_m11)s, %(zone_geo_m11)s, %(population_m11)s, %(code_postal_m11)s), (%(id_region_m12)s, %(code_ville_m12)s, %(nom_ville_standard_m12)s, %(province_m12)s, %(region_admin_m12)s, %(zone_geo_m12)s, %(population_m12)s, %(code_postal_m12)s), (%(id_region_m13)s, %(code_ville_m13)s, %(nom_ville_standard_m13)s, %(province_m13)s, %(region_admin_m13)s, %(zone_geo_m13)s, %(population_m13)s, %(code_postal_m13)s), (%(id_region_m14)s, %(code_ville_m14)s, %(nom_ville_standard_m14)s, %(province_m14)s, %(region_admin_m14)s, %(zone_geo_m14)s, %(population_m14)s, %(code_postal_m14)s), (%(id_region_m15)s, %(code_ville_m15)s, %(nom_ville_standard_m15)s, %(province_m15)s, %(region_admin_m15)s, %(zone_geo_m15)s, %(population_m15)s, %(code_postal_m15)s), (%(id_region_m16)s, %(code_ville_m16)s, %(nom_ville_standard_m16)s, %(province_m16)s, %(region_admin_m16)s, %(zone_geo_m16)s, %(population_m16)s, %(code_postal_m16)s), (%(id_region_m17)s, %(code_ville_m17)s, %(nom_ville_standard_m17)s, %(province_m17)s, %(region_admin_m17)s, %(zone_geo_m17)s, %(population_m17)s, %(code_postal_m17)s), (%(id_region_m18)s, %(code_ville_m18)s, %(nom_ville_standard_m18)s, %(province_m18)s, %(region_admin_m18)s, %(zone_geo_m18)s, %(population_m18)s, %(code_postal_m18)s), (%(id_region_m19)s, %(code_ville_m19)s, %(nom_ville_standard_m19)s, %(province_m19)s, %(region_admin_m19)s, %(zone_geo_m19)s, %(population_m19)s, %(code_postal_m19)s), (%(id_region_m20)s, %(code_ville_m20)s, %(nom_ville_standard_m20)s, %(province_m20)s, %(region_admin_m20)s, %(zone_geo_m20)s, %(population_m20)s, %(code_postal_m20)s), (%(id_region_m21)s, %(code_ville_m21)s, %(nom_ville_standard_m21)s, %(province_m21)s, %(region_admin_m21)s, %(zone_geo_m21)s, %(population_m21)s, %(code_postal_m21)s), (%(id_region_m22)s, %(code_ville_m22)s, %(nom_ville_standard_m22)s, %(province_m22)s, %(region_admin_m22)s, %(zone_geo_m22)s, %(population_m22)s, %(code_postal_m22)s), (%(id_region_m23)s, %(code_ville_m23)s, %(nom_ville_standard_m23)s, %(province_m23)s, %(region_admin_m23)s, %(zone_geo_m23)s, %(population_m23)s, %(code_postal_m23)s), (%(id_region_m24)s, %(code_ville_m24)s, %(nom_ville_standard_m24)s, %(province_m24)s, %(region_admin_m24)s, %(zone_geo_m24)s, %(population_m24)s, %(code_postal_m24)s), (%(id_region_m25)s, %(code_ville_m25)s, %(nom_ville_standard_m25)s, %(province_m25)s, %(region_admin_m25)s, %(zone_geo_m25)s, %(population_m25)s, %(code_postal_m25)s), (%(id_region_m26)s, %(code_ville_m26)s, %(nom_ville_standard_m26)s, %(province_m26)s, %(region_admin_m26)s, %(zone_geo_m26)s, %(population_m26)s, %(code_postal_m26)s), (%(id_region_m27)s, %(code_ville_m27)s, %(nom_ville_standard_m27)s, %(province_m27)s, %(region_admin_m27)s, %(zone_geo_m27)s, %(population_m27)s, %(code_postal_m27)s), (%(id_region_m28)s, %(code_ville_m28)s, %(nom_ville_standard_m28)s, %(province_m28)s, %(region_admin_m28)s, %(zone_geo_m28)s, %(population_m28)s, %(code_postal_m28)s), (%(id_region_m29)s, %(code_ville_m29)s, %(nom_ville_standard_m29)s, %(province_m29)s, %(region_admin_m29)s, %(zone_geo_m29)s, %(population_m29)s, %(code_postal_m29)s)]
+[parameters: {'id_region_m0': 1, 'code_ville_m0': 'CAS', 'nom_ville_standard_m0': 'Casablanca', 'province_m0': 'Casablanca', 'region_admin_m0': 'Casablanca-Settat', 'zone_geo_m0': 'Centre-Ouest', 'population_m0': 3752000, 'code_postal_m0': 20000, 'id_region_m1': 2, 'code_ville_m1': 'RAB', 'nom_ville_standard_m1': 'Rabat', 'province_m1': 'Rabat', 'region_admin_m1': 'Rabat-Salé-Kénitra', 'zone_geo_m1': 'Centre-Nord', 'population_m1': 577827, 'code_postal_m1': 10000, 'id_region_m2': 3, 'code_ville_m2': 'FES', 'nom_ville_standard_m2': 'Fès', 'province_m2': 'Fès', 'region_admin_m2': 'Fès-Meknès', 'zone_geo_m2': 'Centre-Nord', 'population_m2': 1112072, 'code_postal_m2': 30000, 'id_region_m3': 4, 'code_ville_m3': 'MRK', 'nom_ville_standard_m3': 'Marrakech', 'province_m3': 'Marrakech', 'region_admin_m3': 'Marrakech-Safi', 'zone_geo_m3': 'Centre-Sud', 'population_m3': 928850, 'code_postal_m3': 40000, 'id_region_m4': 5, 'code_ville_m4': 'TNG', 'nom_ville_standard_m4': 'Tanger', 'province_m4': 'Tanger-Assilah', 'region_admin_m4': 'Tanger-Tétouan-Al Hoceima', 'zone_geo_m4': 'Nord', 'population_m4': 947952, 'code_postal_m4': 90000, 'id_region_m5': 6, 'code_ville_m5': 'AGA', 'nom_ville_standard_m5': 'Agadir', 'province_m5': 'Agadir-Ida-Ou-Tanane', 'region_admin_m5': 'Souss-Massa', 'zone_geo_m5': 'Sud-Ouest', 'population_m5': 421844, 'code_postal_m5': 80000, 'id_region_m6': 7, 'code_ville_m6': 'MEK' ... 140 parameters truncated ... 'population_m23': 92374, 'code_postal_m23': 52000, 'id_region_m24': 25, 'code_ville_m24': 'GUE', 'nom_ville_standard_m24': 'Guelmim', 'province_m24': 'Guelmim', 'region_admin_m24': 'Guelmim-Oued Noun', 'zone_geo_m24': 'Sud-Ouest', 'population_m24': 118318, 'code_postal_m24': 81000, 'id_region_m25': 26, 'code_ville_m25': 'TAN', 'nom_ville_standard_m25': 'Tan-Tan', 'province_m25': 'Tan-Tan', 'region_admin_m25': 'Guelmim-Oued Noun', 'zone_geo_m25': 'Sud-Ouest', 'population_m25': 56147, 'code_postal_m25': 82000, 'id_region_m26': 27, 'code_ville_m26': 'BER', 'nom_ville_standard_m26': 'Berkane', 'province_m26': 'Berkane', 'region_admin_m26': 'Oriental', 'zone_geo_m26': 'Est', 'population_m26': 108000, 'code_postal_m26': 63000, 'id_region_m27': 28, 'code_ville_m27': 'LAR', 'nom_ville_standard_m27': 'Larache', 'province_m27': 'Larache', 'region_admin_m27': 'Tanger-Tétouan-Al Hoceima', 'zone_geo_m27': 'Nord', 'population_m27': 125008, 'code_postal_m27': 92000, 'id_region_m28': 29, 'code_ville_m28': 'ASI', 'nom_ville_standard_m28': 'Assilah', 'province_m28': 'Tanger-Assilah', 'region_admin_m28': 'Tanger-Tétouan-Al Hoceima', 'zone_geo_m28': 'Nord', 'population_m28': 31147, 'code_postal_m28': 90040, 'id_region_m29': 30, 'code_ville_m29': 'MOH', 'nom_ville_standard_m29': 'Mohammedia', 'province_m29': 'Mohammedia', 'region_admin_m29': 'Casablanca-Settat', 'zone_geo_m29': 'Centre-Ouest', 'population_m29': 208612, 'code_postal_m29': 28800}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+Traceback (most recent call last):
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: ERREUR:  la colonne « code_ville » de la relation « dim_region » n'existe pas
+LINE 1: INSERT INTO dwh_mexora.dim_region (id_region, code_ville, no...
+                                                      ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\khaoula\Desktop\Mexora_DataWerehouse\mexora_DatawereHouse\main.py", line 94, in run_etl
+    load_table(dim_region,  "dim_region",   engine, mode="append")
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\khaoula\Desktop\Mexora_DataWerehouse\mexora_DatawereHouse\load\loader.py", line 224, in load_table
+            df.to_sql(
+            ~~~~~~~~~^
+        table,
+        ^^^^^^
+    ...<5 lines>...
+        chunksize=1000,
+        ^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\pandas\core\generic.py", line 3109, in to_sql
+    return sql.to_sql(
+           ~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<8 lines>...
+        method=method,
+        ^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\pandas\io\sql.py", line 844, in to_sql
+    return pandas_sql.to_sql(
+           ~~~~~~~~~~~~~~~~~^
+        frame,
+        ^^^^^^
+    ...<9 lines>...
+        **engine_kwargs,
+        ^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\pandas\io\sql.py", line 2030, in to_sql
+    total_inserted = sql_engine.insert_records(
+        table=table,
+    ...<7 lines>...
+        **engine_kwargs,
+    )
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\pandas\io\sql.py", line 1579, in insert_records
+    raise err
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\pandas\io\sql.py", line 1570, in insert_records
+    return table.insert(chunksize=chunksize, method=method)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\pandas\io\sql.py", line 1121, in insert
+    num_inserted = exec_insert(conn, keys, chunk_iter)
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\pandas\io\sql.py", line 1029, in _execute_insert_multi
+    result = conn.execute(stmt)
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\sql\elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\khaoula\AppData\Local\Programs\Python\Python314\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedColumn) ERREUR:  la colonne « code_ville » de la relation « dim_region » n'existe pas
+LINE 1: INSERT INTO dwh_mexora.dim_region (id_region, code_ville, no...
+                                                      ^
+
+[SQL: INSERT INTO dwh_mexora.dim_region (id_region, code_ville, nom_ville_standard, province, region_admin, zone_geo, population, code_postal) VALUES (%(id_region_m0)s, %(code_ville_m0)s, %(nom_ville_standard_m0)s, %(province_m0)s, %(region_admin_m0)s, %(zone_geo_m0)s, %(population_m0)s, %(code_postal_m0)s), (%(id_region_m1)s, %(code_ville_m1)s, %(nom_ville_standard_m1)s, %(province_m1)s, %(region_admin_m1)s, %(zone_geo_m1)s, %(population_m1)s, %(code_postal_m1)s), (%(id_region_m2)s, %(code_ville_m2)s, %(nom_ville_standard_m2)s, %(province_m2)s, %(region_admin_m2)s, %(zone_geo_m2)s, %(population_m2)s, %(code_postal_m2)s), (%(id_region_m3)s, %(code_ville_m3)s, %(nom_ville_standard_m3)s, %(province_m3)s, %(region_admin_m3)s, %(zone_geo_m3)s, %(population_m3)s, %(code_postal_m3)s), (%(id_region_m4)s, %(code_ville_m4)s, %(nom_ville_standard_m4)s, %(province_m4)s, %(region_admin_m4)s, %(zone_geo_m4)s, %(population_m4)s, %(code_postal_m4)s), (%(id_region_m5)s, %(code_ville_m5)s, %(nom_ville_standard_m5)s, %(province_m5)s, %(region_admin_m5)s, %(zone_geo_m5)s, %(population_m5)s, %(code_postal_m5)s), (%(id_region_m6)s, %(code_ville_m6)s, %(nom_ville_standard_m6)s, %(province_m6)s, %(region_admin_m6)s, %(zone_geo_m6)s, %(population_m6)s, %(code_postal_m6)s), (%(id_region_m7)s, %(code_ville_m7)s, %(nom_ville_standard_m7)s, %(province_m7)s, %(region_admin_m7)s, %(zone_geo_m7)s, %(population_m7)s, %(code_postal_m7)s), (%(id_region_m8)s, %(code_ville_m8)s, %(nom_ville_standard_m8)s, %(province_m8)s, %(region_admin_m8)s, %(zone_geo_m8)s, %(population_m8)s, %(code_postal_m8)s), (%(id_region_m9)s, %(code_ville_m9)s, %(nom_ville_standard_m9)s, %(province_m9)s, %(region_admin_m9)s, %(zone_geo_m9)s, %(population_m9)s, %(code_postal_m9)s), (%(id_region_m10)s, %(code_ville_m10)s, %(nom_ville_standard_m10)s, %(province_m10)s, %(region_admin_m10)s, %(zone_geo_m10)s, %(population_m10)s, %(code_postal_m10)s), (%(id_region_m11)s, %(code_ville_m11)s, %(nom_ville_standard_m11)s, %(province_m11)s, %(region_admin_m11)s, %(zone_geo_m11)s, %(population_m11)s, %(code_postal_m11)s), (%(id_region_m12)s, %(code_ville_m12)s, %(nom_ville_standard_m12)s, %(province_m12)s, %(region_admin_m12)s, %(zone_geo_m12)s, %(population_m12)s, %(code_postal_m12)s), (%(id_region_m13)s, %(code_ville_m13)s, %(nom_ville_standard_m13)s, %(province_m13)s, %(region_admin_m13)s, %(zone_geo_m13)s, %(population_m13)s, %(code_postal_m13)s), (%(id_region_m14)s, %(code_ville_m14)s, %(nom_ville_standard_m14)s, %(province_m14)s, %(region_admin_m14)s, %(zone_geo_m14)s, %(population_m14)s, %(code_postal_m14)s), (%(id_region_m15)s, %(code_ville_m15)s, %(nom_ville_standard_m15)s, %(province_m15)s, %(region_admin_m15)s, %(zone_geo_m15)s, %(population_m15)s, %(code_postal_m15)s), (%(id_region_m16)s, %(code_ville_m16)s, %(nom_ville_standard_m16)s, %(province_m16)s, %(region_admin_m16)s, %(zone_geo_m16)s, %(population_m16)s, %(code_postal_m16)s), (%(id_region_m17)s, %(code_ville_m17)s, %(nom_ville_standard_m17)s, %(province_m17)s, %(region_admin_m17)s, %(zone_geo_m17)s, %(population_m17)s, %(code_postal_m17)s), (%(id_region_m18)s, %(code_ville_m18)s, %(nom_ville_standard_m18)s, %(province_m18)s, %(region_admin_m18)s, %(zone_geo_m18)s, %(population_m18)s, %(code_postal_m18)s), (%(id_region_m19)s, %(code_ville_m19)s, %(nom_ville_standard_m19)s, %(province_m19)s, %(region_admin_m19)s, %(zone_geo_m19)s, %(population_m19)s, %(code_postal_m19)s), (%(id_region_m20)s, %(code_ville_m20)s, %(nom_ville_standard_m20)s, %(province_m20)s, %(region_admin_m20)s, %(zone_geo_m20)s, %(population_m20)s, %(code_postal_m20)s), (%(id_region_m21)s, %(code_ville_m21)s, %(nom_ville_standard_m21)s, %(province_m21)s, %(region_admin_m21)s, %(zone_geo_m21)s, %(population_m21)s, %(code_postal_m21)s), (%(id_region_m22)s, %(code_ville_m22)s, %(nom_ville_standard_m22)s, %(province_m22)s, %(region_admin_m22)s, %(zone_geo_m22)s, %(population_m22)s, %(code_postal_m22)s), (%(id_region_m23)s, %(code_ville_m23)s, %(nom_ville_standard_m23)s, %(province_m23)s, %(region_admin_m23)s, %(zone_geo_m23)s, %(population_m23)s, %(code_postal_m23)s), (%(id_region_m24)s, %(code_ville_m24)s, %(nom_ville_standard_m24)s, %(province_m24)s, %(region_admin_m24)s, %(zone_geo_m24)s, %(population_m24)s, %(code_postal_m24)s), (%(id_region_m25)s, %(code_ville_m25)s, %(nom_ville_standard_m25)s, %(province_m25)s, %(region_admin_m25)s, %(zone_geo_m25)s, %(population_m25)s, %(code_postal_m25)s), (%(id_region_m26)s, %(code_ville_m26)s, %(nom_ville_standard_m26)s, %(province_m26)s, %(region_admin_m26)s, %(zone_geo_m26)s, %(population_m26)s, %(code_postal_m26)s), (%(id_region_m27)s, %(code_ville_m27)s, %(nom_ville_standard_m27)s, %(province_m27)s, %(region_admin_m27)s, %(zone_geo_m27)s, %(population_m27)s, %(code_postal_m27)s), (%(id_region_m28)s, %(code_ville_m28)s, %(nom_ville_standard_m28)s, %(province_m28)s, %(region_admin_m28)s, %(zone_geo_m28)s, %(population_m28)s, %(code_postal_m28)s), (%(id_region_m29)s, %(code_ville_m29)s, %(nom_ville_standard_m29)s, %(province_m29)s, %(region_admin_m29)s, %(zone_geo_m29)s, %(population_m29)s, %(code_postal_m29)s)]
+[parameters: {'id_region_m0': 1, 'code_ville_m0': 'CAS', 'nom_ville_standard_m0': 'Casablanca', 'province_m0': 'Casablanca', 'region_admin_m0': 'Casablanca-Settat', 'zone_geo_m0': 'Centre-Ouest', 'population_m0': 3752000, 'code_postal_m0': 20000, 'id_region_m1': 2, 'code_ville_m1': 'RAB', 'nom_ville_standard_m1': 'Rabat', 'province_m1': 'Rabat', 'region_admin_m1': 'Rabat-Salé-Kénitra', 'zone_geo_m1': 'Centre-Nord', 'population_m1': 577827, 'code_postal_m1': 10000, 'id_region_m2': 3, 'code_ville_m2': 'FES', 'nom_ville_standard_m2': 'Fès', 'province_m2': 'Fès', 'region_admin_m2': 'Fès-Meknès', 'zone_geo_m2': 'Centre-Nord', 'population_m2': 1112072, 'code_postal_m2': 30000, 'id_region_m3': 4, 'code_ville_m3': 'MRK', 'nom_ville_standard_m3': 'Marrakech', 'province_m3': 'Marrakech', 'region_admin_m3': 'Marrakech-Safi', 'zone_geo_m3': 'Centre-Sud', 'population_m3': 928850, 'code_postal_m3': 40000, 'id_region_m4': 5, 'code_ville_m4': 'TNG', 'nom_ville_standard_m4': 'Tanger', 'province_m4': 'Tanger-Assilah', 'region_admin_m4': 'Tanger-Tétouan-Al Hoceima', 'zone_geo_m4': 'Nord', 'population_m4': 947952, 'code_postal_m4': 90000, 'id_region_m5': 6, 'code_ville_m5': 'AGA', 'nom_ville_standard_m5': 'Agadir', 'province_m5': 'Agadir-Ida-Ou-Tanane', 'region_admin_m5': 'Souss-Massa', 'zone_geo_m5': 'Sud-Ouest', 'population_m5': 421844, 'code_postal_m5': 80000, 'id_region_m6': 7, 'code_ville_m6': 'MEK' ... 140 parameters truncated ... 'population_m23': 92374, 'code_postal_m23': 52000, 'id_region_m24': 25, 'code_ville_m24': 'GUE', 'nom_ville_standard_m24': 'Guelmim', 'province_m24': 'Guelmim', 'region_admin_m24': 'Guelmim-Oued Noun', 'zone_geo_m24': 'Sud-Ouest', 'population_m24': 118318, 'code_postal_m24': 81000, 'id_region_m25': 26, 'code_ville_m25': 'TAN', 'nom_ville_standard_m25': 'Tan-Tan', 'province_m25': 'Tan-Tan', 'region_admin_m25': 'Guelmim-Oued Noun', 'zone_geo_m25': 'Sud-Ouest', 'population_m25': 56147, 'code_postal_m25': 82000, 'id_region_m26': 27, 'code_ville_m26': 'BER', 'nom_ville_standard_m26': 'Berkane', 'province_m26': 'Berkane', 'region_admin_m26': 'Oriental', 'zone_geo_m26': 'Est', 'population_m26': 108000, 'code_postal_m26': 63000, 'id_region_m27': 28, 'code_ville_m27': 'LAR', 'nom_ville_standard_m27': 'Larache', 'province_m27': 'Larache', 'region_admin_m27': 'Tanger-Tétouan-Al Hoceima', 'zone_geo_m27': 'Nord', 'population_m27': 125008, 'code_postal_m27': 92000, 'id_region_m28': 29, 'code_ville_m28': 'ASI', 'nom_ville_standard_m28': 'Assilah', 'province_m28': 'Tanger-Assilah', 'region_admin_m28': 'Tanger-Tétouan-Al Hoceima', 'zone_geo_m28': 'Nord', 'population_m28': 31147, 'code_postal_m28': 90040, 'id_region_m29': 30, 'code_ville_m29': 'MOH', 'nom_ville_standard_m29': 'Mohammedia', 'province_m29': 'Mohammedia', 'region_admin_m29': 'Casablanca-Settat', 'zone_geo_m29': 'Centre-Ouest', 'population_m29': 208612, 'code_postal_m29': 28800}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2026-05-02 22:42:26 | main                      | INFO     | ╔══════════════════════════════════════════════════╗
+2026-05-02 22:42:26 | main                      | INFO     | ║       PIPELINE ETL MEXORA — DÉMARRAGE           ║
+2026-05-02 22:42:26 | main                      | INFO     | ╚══════════════════════════════════════════════════╝
+2026-05-02 22:42:26 | main                      | INFO     | >>> [1/3] EXTRACTION depuis data/raw/
+2026-05-02 22:42:26 | extractor                 | INFO     | =======================================================
+2026-05-02 22:42:26 | extractor                 | INFO     |   EXTRACTION — DÉMARRAGE
+2026-05-02 22:42:26 | extractor                 | INFO     | =======================================================
+2026-05-02 22:42:26 | extractor                 | INFO     | Lecture commandes : C:\Users\khaoula\Desktop\Mexora_DataWerehouse\mexora_DatawereHouse\data\raw\commandes_mexora.csv
+2026-05-02 22:42:27 | extractor                 | INFO     | commandes brutes : 51500 lignes | colonnes : ['id_commande', 'id_client', 'id_produit', 'date_commande', 'quantite', 'prix_unitaire', 'statut', 'ville_livraison', 'mode_paiement', 'id_livreur', 'date_livraison']
+2026-05-02 22:42:27 | extractor                 | DEBUG    | [commandes] Champs vides détectés :
+id_livreur         3626
+date_livraison    23657
+2026-05-02 22:42:27 | extractor                 | INFO     | Lecture clients : C:\Users\khaoula\Desktop\Mexora_DataWerehouse\mexora_DatawereHouse\data\raw\clients_mexora.csv
+2026-05-02 22:42:27 | extractor                 | INFO     | clients bruts : 5188 lignes | colonnes : ['id_client', 'nom', 'prenom', 'email', 'date_naissance', 'sexe', 'ville', 'telephone', 'date_inscription', 'canal_acquisition']
+2026-05-02 22:42:27 | extractor                 | DEBUG    | [clients] Champs vides détectés :
+date_naissance    50
+2026-05-02 22:42:27 | extractor                 | INFO     | Lecture produits : C:\Users\khaoula\Desktop\Mexora_DataWerehouse\mexora_DatawereHouse\data\raw\produits.json
+2026-05-02 22:42:27 | extractor                 | INFO     | produits bruts : 50 lignes | colonnes : ['id_produit', 'nom', 'categorie', 'sous_categorie', 'marque', 'fournisseur', 'prix_catalogue', 'origine_pays', 'date_creation', 'actif']
+2026-05-02 22:42:27 | extractor                 | INFO     | Lecture régions : C:\Users\khaoula\Desktop\Mexora_DataWerehouse\mexora_DatawereHouse\data\raw\regions_maroc.csv
+2026-05-02 22:42:27 | extractor                 | INFO     | regions : 30 lignes | colonnes : ['code_ville', 'nom_ville_standard', 'province', 'region_admin', 'zone_geo', 'population', 'code_postal']
+2026-05-02 22:42:27 | extractor                 | INFO     |   EXTRACTION — TERMINÉE ✓
+2026-05-02 22:42:27 | extractor                 | INFO     | =======================================================
+2026-05-02 22:42:27 | main                      | INFO     | >>> [2/3] TRANSFORMATION
+2026-05-02 22:42:27 | clean_clients             | INFO     | ── Nettoyage CLIENTS démarré ──
+2026-05-02 22:42:27 | clean_clients             | INFO     | [1] Doublons (même email) supprimés : 188
+2026-05-02 22:42:27 | clean_clients             | INFO     | [2] Sexe normalisé → M/F/Inconnu
+2026-05-02 22:42:27 | clean_clients             | INFO     | [3] Dates naissance invalides mises à NaT : 187
+2026-05-02 22:42:27 | clean_clients             | INFO     | [4] Emails invalides détectés : 399
+2026-05-02 22:42:27 | clean_clients             | INFO     | [5] Villes harmonisées
+2026-05-02 22:42:27 | clean_clients             | INFO     | ── CLIENTS : 5188 → 5000 lignes après nettoyage ──
+2026-05-02 22:42:27 | clean_produits            | INFO     | ── Nettoyage PRODUITS démarré ──
+2026-05-02 22:42:27 | clean_produits            | INFO     | [1] Catégories normalisées (title case)
+2026-05-02 22:42:27 | clean_produits            | INFO     | [2] Produits inactifs (actif=False) : 6 — conservés pour gestion SCD
+2026-05-02 22:42:27 | clean_produits            | INFO     | [3] Prix catalogue nuls remplacés par 0.0 : 5
+2026-05-02 22:42:27 | clean_produits            | INFO     | ── PRODUITS : 50 → 50 lignes après nettoyage ──
+2026-05-02 22:42:27 | clean_commandes           | INFO     | ── Nettoyage COMMANDES démarré ──
+2026-05-02 22:42:27 | clean_commandes           | INFO     | [1] Doublons supprimés : 1500
+2026-05-02 22:42:51 | clean_commandes           | INFO     | [2] Dates commande non parsées : 0
+2026-05-02 22:42:51 | clean_commandes           | INFO     | [2] Lignes supprimées (date invalide) : 0
+2026-05-02 22:42:51 | clean_commandes           | INFO     | [3] Villes de livraison harmonisées
+2026-05-02 22:42:51 | clean_commandes           | INFO     | [4] id_livreur manquants remplacés : 3499
+2026-05-02 22:42:51 | clean_commandes           | INFO     | [5] Lignes supprimées (quantité ≤ 0) : 717
+2026-05-02 22:42:51 | clean_commandes           | INFO     | [6] Lignes supprimées (prix = 0) : 498
+2026-05-02 22:42:51 | clean_commandes           | INFO     | [7] Statuts non mappés (→ 'inconnu') : 0
+2026-05-02 22:42:51 | clean_commandes           | INFO     | ── COMMANDES : 51500 → 48785 lignes après nettoyage ──
+2026-05-02 22:42:51 | build_dimensions          | INFO     | Construction dim_temps...
+2026-05-02 22:42:51 | build_dimensions          | INFO     | dim_temps : 4383 lignes
+2026-05-02 22:42:51 | build_dimensions          | INFO     | Construction dim_region...
+2026-05-02 22:42:51 | build_dimensions          | INFO     | dim_region : 30 lignes
+2026-05-02 22:42:51 | build_dimensions          | INFO     | Construction dim_client (SCD Type 2)...
+2026-05-02 22:42:51 | build_dimensions          | INFO     | dim_client : 5000 lignes (version initiale)
+2026-05-02 22:42:51 | build_dimensions          | INFO     | Construction dim_produit (SCD Type 1)...
+2026-05-02 22:42:51 | build_dimensions          | INFO     | dim_produit : 50 lignes dont 6 inactifs (conservés pour SCD)
+2026-05-02 22:42:51 | build_dimensions          | INFO     | Construction fact_commandes...
+2026-05-02 22:42:52 | build_dimensions          | WARNING  | id_client sans correspondance dans dim_client : 200
+2026-05-02 22:42:52 | build_dimensions          | INFO     | fact_commandes : 48785 lignes
+2026-05-02 22:42:52 | main                      | INFO     |   dim_temps    :    4,383 lignes
+2026-05-02 22:42:52 | main                      | INFO     |   dim_region   :       30 lignes
+2026-05-02 22:42:52 | main                      | INFO     |   dim_client   :    5,000 lignes
+2026-05-02 22:42:52 | main                      | INFO     |   dim_produit  :       50 lignes
+2026-05-02 22:42:52 | main                      | INFO     |   fact_commandes : 48,785 lignes
+2026-05-02 22:42:52 | main                      | INFO     | >>> [3/3] CHARGEMENT dans PostgreSQL
+2026-05-02 22:42:52 | loader                    | INFO     | Connexion PostgreSQL prête
+2026-05-02 22:42:52 | loader                    | INFO     | Création du schéma DWH dans PostgreSQL...
+2026-05-02 22:42:53 | loader                    | INFO     | Schéma créé ✓
+2026-05-02 22:42:55 | loader                    | INFO     | [dim_temps] 4383 lignes chargées ✓
+2026-05-02 22:42:55 | loader                    | INFO     | [dim_region] 30 lignes chargées ✓
+2026-05-02 22:42:59 | loader                    | INFO     | [dim_client] 5000 lignes chargées ✓
+2026-05-02 22:42:59 | loader                    | INFO     | [dim_produit] 50 lignes chargées ✓
+2026-05-02 22:43:26 | loader                    | INFO     | [fact_commandes] 48785 lignes chargées ✓
+2026-05-02 22:43:26 | loader                    | INFO     | Création des vues matérialisées...
+2026-05-02 22:43:27 | loader                    | INFO     | Vues matérialisées créées ✓
+2026-05-02 22:43:27 | loader                    | INFO     | Vue 'mv_ventes_region' rafraîchie ✓
+2026-05-02 22:43:27 | loader                    | INFO     | Vue 'mv_perf_categorie' rafraîchie ✓
+2026-05-02 22:43:27 | loader                    | INFO     | Vue 'mv_perf_mensuelle' rafraîchie ✓
+2026-05-02 22:43:27 | main                      | INFO     | ╔══════════════════════════════════════════════════╗
+2026-05-02 22:43:27 | main                      | INFO     | ║   PIPELINE TERMINÉ AVEC SUCCÈS ✓                ║
+2026-05-02 22:43:27 | main                      | INFO     | ╚══════════════════════════════════════════════════╝

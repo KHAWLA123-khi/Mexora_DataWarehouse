@@ -1,0 +1,31 @@
+code_ville,nom_ville_standard,province,region_admin,zone_geo,population,code_postal
+CAS,Casablanca,Casablanca,Casablanca-Settat,Centre-Ouest,3752000,20000
+RAB,Rabat,Rabat,Rabat-Salé-Kénitra,Centre-Nord,577827,10000
+FES,Fès,Fès,Fès-Meknès,Centre-Nord,1112072,30000
+MRK,Marrakech,Marrakech,Marrakech-Safi,Centre-Sud,928850,40000
+TNG,Tanger,Tanger-Assilah,Tanger-Tétouan-Al Hoceima,Nord,947952,90000
+AGA,Agadir,Agadir-Ida-Ou-Tanane,Souss-Massa,Sud-Ouest,421844,80000
+MEK,Meknès,Meknès,Fès-Meknès,Centre-Nord,632079,50000
+OUJ,Oujda,Oujda-Angad,Oriental,Est,494252,60000
+KEN,Kénitra,Kénitra,Rabat-Salé-Kénitra,Centre-Nord,431282,14000
+SAL,Salé,Salé,Rabat-Salé-Kénitra,Centre-Nord,890000,11000
+TET,Tétouan,Tétouan,Tanger-Tétouan-Al Hoceima,Nord,380787,93000
+ELJ,El Jadida,El Jadida,Casablanca-Settat,Centre-Ouest,200916,24000
+NAD,Nador,Nador,Oriental,Est,161726,62000
+BEN,Béni Mellal,Béni Mellal,Béni Mellal-Khénifra,Centre,192302,23000
+LAA,Laâyoune,Laâyoune,Laâyoune-Sakia El Hamra,Sud,217732,70000
+SAF,Safi,Safi,Marrakech-Safi,Centre-Sud,308508,46000
+ELH,El Hoceima,Al Hoceima,Tanger-Tétouan-Al Hoceima,Nord,55357,32000
+TAZ,Taza,Taza,Fès-Meknès,Centre-Nord,148456,35000
+SER,Settat,Settat,Casablanca-Settat,Centre-Ouest,142250,26000
+KHE,Khémisset,Khémisset,Rabat-Salé-Kénitra,Centre-Nord,131542,15000
+KHN,Khénifra,Khénifra,Béni Mellal-Khénifra,Centre,117510,54000
+IFR,Ifrane,Ifrane,Fès-Meknès,Centre-Nord,19738,53000
+ZAG,Zagora,Zagora,Drâa-Tafilalet,Sud,35000,45900
+ERS,Errachidia,Errachidia,Drâa-Tafilalet,Sud,92374,52000
+GUE,Guelmim,Guelmim,Guelmim-Oued Noun,Sud-Ouest,118318,81000
+TAN,Tan-Tan,Tan-Tan,Guelmim-Oued Noun,Sud-Ouest,56147,82000
+BER,Berkane,Berkane,Oriental,Est,108000,63000
+LAR,Larache,Larache,Tanger-Tétouan-Al Hoceima,Nord,125008,92000
+ASI,Assilah,Tanger-Assilah,Tanger-Tétouan-Al Hoceima,Nord,31147,90040
+MOH,Mohammedia,Mohammedia,Casablanca-Settat,Centre-Ouest,208612,28800
